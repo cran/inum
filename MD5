@@ -1,12 +1,12 @@
-2ef33cb5deac21b27f5db124c5914fbf *DESCRIPTION
+d16977a357b8b9141e7bc7a2c74aa0e8 *DESCRIPTION
 a90652a4339c8b91f1f7468151c9dddd *NAMESPACE
 f17de57fbe6ff20aa6056dfb7129e4be *R/enum.R
 2841cb5f2b4e96bbd1dbbfc8663f5800 *R/interval.R
-98d52e00aa5f61fc2a87dbe64df4b39d *R/inum.R
+44411a23dddad4a6d298c769a43b9bb7 *R/inum.R
 339c2c619522533780dc2ab641fef27d *cleanup
-cd2db27d32787d8d0ddf1a9375a99210 *inst/NEWS.Rd
+283bd3c375ae520780e15bba30b175d6 *inst/NEWS.Rd
 26c4e331027b064acf4b32ab14b2acdd *man/enum.Rd
 060c4485f8a056cc3908272e5a3100c3 *man/interval.Rd
 2633dd4261ee84616992e8ef5e2e53a4 *man/inum.Rd
 bea1434810b3ab72cb58eea1821051ac *tests/regtest.R
-9c242c316177b55d5ef3961cfcfe421b *tests/regtest.Rout.save
+9109d62599c989fdc441ee0683359bbd *tests/regtest.Rout.save
