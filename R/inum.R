@@ -7,7 +7,7 @@ inum.default <- function(object, nmax = 20, ...)
 
 inum.data.frame <- function(object, nmax = 20, ignore = NULL, total = FALSE, 
                            weights = NULL, as.interval = "", 
-                           complete.cases.only = FALSE, ...) {
+                           complete.cases.only = FALSE, meanlevels = FALSE, ...) {
 
     if (total) {
         bdr <- inum(object, nmax = nmax, ignore = ignore, 
@@ -72,10 +72,10 @@ inum.data.frame <- function(object, nmax = 20, ignore = NULL, total = FALSE,
 
     if (!is.null(ignore)) {
         if (is.integer(ignore)) cn <- cn[-ignore]
-        if (is.character(ignore)) cn <- cn[cn != ignore]
+        if (is.character(ignore)) cn <- cn[!(cn %in% ignore)]
     }
 
-    if (as.interval != "") {
+    if (any(as.interval != "")) {
         if (!is.character(as.interval))
             stop(sQuote("as.interval"), " ", "is not a character")
     }
@@ -85,7 +85,7 @@ inum.data.frame <- function(object, nmax = 20, ignore = NULL, total = FALSE,
         if (is.logical(x) || is.factor(x) || is.integer(x)) {
             ix <- enum(x)
         } else if (is.numeric(x)) {
-            ux <- sort(unique(x))
+            ux <- oux <- sort(unique(x))
             xmin <- ux[1]
             xmax <- ux[length(ux)] 
             if (length(ux) > nmax)
@@ -95,13 +95,28 @@ inum.data.frame <- function(object, nmax = 20, ignore = NULL, total = FALSE,
             tol <- min(diff(sort(ux))) ### sqrt(.Machine$double.eps)
             ix <- interval(x, breaks = c(xmin - tol, ux, xmax))
             if (all(as.interval != v)) {
-                ### <FIXME> this minimises distances to original
-                ### measurements but leads to incorrect cutpoints
-                ### (where c(ux, xmax) would be OK)
-                # nux <- c(xmin, ux) + diff(c(xmin, ux, xmax)) / 2
-                nux <- c(ux, xmax)
-                ### </FIXME>
-                attr(ix, "levels") <- as.double(nux)
+                if (length(oux) <= nmax) {
+                    ### assign sorted unique values
+                    attr(ix, "levels") <- as.double(oux)
+                } else {
+                    if (meanlevels) {
+                        ### compute mean of x-values for each level
+                        ### and assign; first element corresponds to NAs
+                        w <- x
+                        w[is.na(w)] <- 0 ### does not count
+                        ix2 <- unclass(ix) ### is of length + 1
+                        attr(ix2, "levels") <- NULL
+                        sx <- libcoin::ctabs(ix = ix2, weights = w)[-1] ### w/o NAs
+                        cn <- libcoin::ctabs(ix = ix2)[-1]
+                        lev <- sx / cn
+                        attr(ix, "levels") <- lev
+                    } else {
+                        ### this maximises distances to original
+                        ### measurements but leads to correct cutpoints
+                        nux <- c(ux, xmax)
+                        attr(ix, "levels") <- as.double(nux)
+                    }
+                }
                 class(ix) <- c("enum", "integer")
              }
         } else if (is.data.frame(x)) {
