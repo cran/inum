@@ -57,8 +57,8 @@ inum.data.frame <- function(object, nmax = 20, ignore = NULL, total = FALSE,
             cc[is.na(cc)] <- TRUE
             if (any(!cc)) {
                 sDF <- sDF[cc,,drop = FALSE]
-                ret[!cc] <- 0L
-                ret <- unclass(factor(ret)) - 1L
+                rownames(sDF) <- 1:nrow(sDF)
+                ret <- ret - 1L
             }
         }  
 
